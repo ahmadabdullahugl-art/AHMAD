@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f3f4f0" />
+    <meta name="description" content="Find MC and USDOT identifiers published on a brokerage company website and check its email domain protections." />
+    <title>Broker ID Finder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="rail" aria-label="Workspace navigation">
+        <a class="brand-mark" href="/" aria-label="Broker ID Finder home">
+          <svg viewBox="0 0 36 36" aria-hidden="true"><path d="M18 3.5 30 8v9.4c0 7.1-4.8 12.7-12 15.1C10.8 30.1 6 24.5 6 17.4V8l12-4.5Z"/><path d="m12.6 18.2 3.5 3.5 7.5-8"/></svg>
+        </a>
+        <div class="rail-divider"></div>
+        <button class="rail-action is-current" type="button" aria-label="Domain lookup" title="Domain lookup">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5M8 10.8h5.6M10.8 8v5.6"/></svg>
+        </button>
+        <div class="rail-bottom"><span class="rail-status-dot"></span><span>PUBLIC DATA</span></div>
+      </aside>
+
+      <main class="main-area">
+        <header class="topbar">
+          <div class="crumb"><span>WORKSPACE</span><span class="crumb-slash">/</span><strong>Broker ID Finder</strong></div>
+          <div class="topbar-right"><span class="live-mark"></span><span>Lookup ready</span><span class="topbar-divider"></span><span class="today-label" id="today-label"></span></div>
+        </header>
+
+        <div class="content-wrap">
+          <section class="intro-row">
+            <div>
+              <p class="eyebrow"><span class="eyebrow-line"></span> CARRIER INTELLIGENCE <span class="eyebrow-code">01 / 01</span></p>
+              <h1>Brokerage lookup<span class="title-period">.</span></h1>
+              <p class="intro-copy">Match a brokerage domain to FMCSA carrier records. Review company-name matches and broker status before you book.</p>
+            </div>
+            <div class="intro-seal" aria-hidden="true">
+              <span class="seal-ring"></span>
+              <svg viewBox="0 0 80 80"><path d="M40 10 62 18v17c0 13-8.7 23-22 27-13.3-4-22-14-22-27V18l22-8Z"/><path d="m30 37 7 7 14-15"/></svg>
+              <span class="seal-caption">DOMAIN<br />SIGNAL</span>
+            </div>
+          </section>
+
+          <section class="search-panel" aria-labelledby="search-title">
+            <div class="search-panel-heading">
+              <div><span class="step-no">01</span><h2 id="search-title">Search by company domain</h2></div>
+              <div class="search-modes" role="group" aria-label="Search type">
+                <button class="mode-button is-active" type="button" data-mode="domain" aria-pressed="true">Domain</button>
+                <button class="mode-button" type="button" data-mode="company" aria-pressed="false">Company name</button>
+                <button class="mode-button" type="button" data-mode="identifier" aria-pressed="false">Identifier</button>
+              </div>
+            </div>
+            <form id="lookup-form" class="search-form">
+              <label class="domain-input-wrap" for="domain-input">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3.5 12h17M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+                <span class="sr-only" id="input-label">Company domain</span>
+                <select class="identifier-kind" id="identifier-kind" aria-label="Identifier type" hidden>
+                  <option value="MC">MC</option>
+                  <option value="DOT">DOT</option>
+                </select>
+                <input id="domain-input" name="domain" type="text" autocomplete="url" placeholder="example.com" required aria-describedby="domain-help lookup-error" />
+                <span class="input-suffix">DOMAIN</span>
+              </label>
+              <button id="search-button" class="search-button" type="submit"><span>Find MC numbers</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+            </form>
+            <div class="form-foot"><p id="domain-help"><span id="domain-help-text">No protocol needed. Example:</span> <button type="button" class="example-link" data-domain="chrobinson.com">chrobinson.com</button></p><span class="secure-note"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 7V5a4 4 0 0 1 8 0v2M3 7h10v7H3z"/></svg> FMCSA PUBLIC DATA</span></div>
+            <p class="lookup-error" id="lookup-error" role="alert" hidden></p>
+          </section>
+
+          <section class="recent-panel" id="recent-panel" aria-labelledby="recent-title" hidden>
+            <div class="recent-heading"><h2 id="recent-title">Recent lookups</h2><button class="clear-history" id="clear-history" type="button">Clear</button></div>
+            <div id="recent-list" class="recent-list"></div>
+          </section>
+
+          <div class="result-toolbar" id="result-toolbar" hidden>
+            <div class="result-toolbar-left"><span class="result-indicator"></span><span id="result-state">LOOKUP COMPLETE</span><span class="toolbar-separator">/</span><span id="result-domain"></span></div>
+            <button id="new-search" class="text-button" type="button"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10a7 7 0 1 0 2-4.9L3 7m0-4v4h4"/></svg> New lookup</button>
+          </div>
+
+          <section class="results-layout" id="results-layout" hidden aria-live="polite">
+            <div class="primary-column">
+              <section class="company-summary" aria-labelledby="company-name">
+                <div class="company-avatar" id="company-avatar">?</div>
+                <div class="company-info"><p class="mini-label">COMPANY IDENTIFIED</p><h2 id="company-name"></h2><a id="company-domain-link" href="#" target="_blank" rel="noreferrer"></a></div>
+                <div class="scan-stamp"><span class="scan-stamp-dot"></span><span id="scan-time"></span></div>
+              </section>
+
+              <section class="data-section" aria-labelledby="identifier-title">
+                <div class="section-title-row"><div><p class="section-kicker">FMCSA + SAFER</p><h2 id="identifier-title">Verified company matches</h2></div><span id="identifier-count" class="count-badge">0</span></div>
+                <a id="fmcsa-source" class="dataset-source" href="https://data.transportation.gov/Trucking-and-Motorcoaches/Company-Census-File/az4n-8mr2" target="_blank" rel="noreferrer">FMCSA daily source · updated Oct 17, 2026 ↗</a>
+                <p class="reverse-search-note" id="reverse-search-note" hidden></p>
+                <div id="identifier-list" class="identifier-list"></div>
+                <div id="empty-identifiers" class="empty-identifiers" hidden>
+                  <span class="empty-mark">—</span><div><strong>No active FMCSA company match</strong><p>We couldn't find an active census record with an MC docket matching this company name.</p></div>
+                </div>
+                <section class="evidence-conflicts" id="evidence-conflicts" aria-labelledby="conflicts-title" hidden>
+                  <div class="conflict-heading"><strong id="conflicts-title">Website numbers not confirmed</strong><span>CHECK SOURCE</span></div>
+                  <div id="conflict-list" class="conflict-list"></div>
+                </section>
+                <p class="caution-line"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2.5 16 15H2zM9 6.5v4M9 13h.01"/></svg> Name matches can be ambiguous. Verify identity and current authority in SAFER.</p>
+              </section>
+
+            </div>
+
+          </section>
+
+          <section class="welcome-state" id="welcome-state">
+            <div class="welcome-art" aria-hidden="true">
+              <div class="art-grid"></div>
+              <span class="art-corner corner-tl"></span><span class="art-corner corner-br"></span>
+              <span class="art-cross cross-one">+</span><span class="art-cross cross-two">+</span>
+              <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+              <div class="art-core"><svg viewBox="0 0 56 56"><circle cx="24" cy="24" r="14"/><path d="m34 34 12 12M18 24h12M24 18v12"/></svg></div>
+              <span class="art-tag tag-left">MC / DOT</span><span class="art-tag tag-right">SOURCE TRACE</span>
+            </div>
+            <div class="welcome-copy"><p class="section-kicker">READY WHEN YOU ARE</p><h2>Search a domain,<br />name, or ID.</h2><p>Get the phone, MC, and DOT from FMCSA, then confirm broker authority in SAFER.</p></div>
+            <div class="welcome-side"><span class="welcome-side-number">01</span><span>ONE LOOKUP<br />AT A TIME</span></div>
+          </section>
+
+          <footer class="page-footer"><span>FMCSA CARRIER LOOKUP</span><span>PUBLIC DATA <i></i> VERIFY BEFORE USE</span></footer>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
